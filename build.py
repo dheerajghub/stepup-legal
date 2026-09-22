@@ -294,7 +294,8 @@ def relative_from(depth):
 
 def shell(*, title, description, depth, current, body, page_class=""):
     rel = relative_from(depth)
-    assets = "../" * depth + "assets/style.css"
+    up = "../" * depth
+    assets = up + "assets/style.css"
     nav = "".join(
         '<a href="{href}"{aria}>{label}</a>'.format(
             href=rel(slug),
@@ -316,6 +317,10 @@ def shell(*, title, description, depth, current, body, page_class=""):
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0d0d0d" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="{canonical}">
+<link rel="icon" type="image/png" sizes="32x32" href="{up}assets/icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="{up}assets/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="{up}assets/icon-180.png">
+<meta property="og:image" content="{SITE_URL}/assets/logo.png">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{APP_NAME}">
 <meta property="og:title" content="{html.escape(title)} · {APP_NAME}">
@@ -330,7 +335,10 @@ def shell(*, title, description, depth, current, body, page_class=""):
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
   <div class="wrap">
-    <a class="wordmark" href="{rel("")}">StepUp<span class="dot">.</span></a>
+    <a class="brand" href="{rel("")}">
+      <img class="brand-mark" src="{up}assets/logo.png" alt="" width="30" height="30">
+      <span class="wordmark">StepUp<span class="dot">.</span></span>
+    </a>
     <nav class="site-nav" aria-label="Primary">{nav}</nav>
   </div>
 </header>
@@ -418,6 +426,7 @@ def build_document(page):
 def build_index():
     rel = relative_from(0)
     body = f"""<div class="wrap hero">
+  <img class="hero-mark" src="assets/logo.png" alt="StepUp app icon" width="68" height="68">
   <h1>Legal<span class="muted">&amp; support</span></h1>
   <p class="lede">The documents behind {APP_NAME}, the step tracker that keeps your
   health data on your iPhone.</p>
