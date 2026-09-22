@@ -24,8 +24,9 @@
   --gutter: 20px;
 }
 
+/* System preference, unless the reader has explicitly chosen light. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --ink: #f4f4f5;
     --ink-muted: #9a9aa0;
     --ink-faint: #6d6d73;
@@ -37,7 +38,28 @@
     --accent-wash: #1a1f3d;
     --accent-ink: #9db2ff;
     --warn-wash: #2b2210;
+    color-scheme: dark;
   }
+}
+
+/* An explicit choice from the toggle, which beats the system preference. */
+:root[data-theme="dark"] {
+    --ink: #f4f4f5;
+    --ink-muted: #9a9aa0;
+    --ink-faint: #6d6d73;
+    --bg: #0d0d0d;
+    --panel: #181818;
+    --panel-2: #222224;
+    --rule: #2e2e2e;
+    --accent: #7e9cff;
+    --accent-wash: #1a1f3d;
+    --accent-ink: #9db2ff;
+    --warn-wash: #2b2210;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -72,10 +94,13 @@ body {
 .site-header .wrap {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 8px 16px;
   min-height: 68px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
+
 
 .brand {
   display: inline-flex;
@@ -111,6 +136,13 @@ body {
 }
 
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
 .site-nav {
   display: flex;
   gap: 4px;
@@ -130,6 +162,43 @@ body {
 
 .site-nav a:hover { color: var(--ink); background: var(--panel-2); }
 .site-nav a[aria-current="page"] { color: var(--ink); font-weight: 600; }
+/* The brand keeps the first row to itself once the nav no longer fits beside
+   it, rather than the nav shrinking into something untappable. */
+@media (max-width: 30rem) {
+  .site-header .wrap { justify-content: center; }
+  .header-actions { margin-left: 0; width: 100%; justify-content: space-between; }
+  .site-nav { font-size: 14px; }
+  .site-nav a { padding: 6px 7px; }
+}
+
+/* ---------- theme toggle ---------- */
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+  flex: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.theme-toggle:hover { background: var(--panel-2); color: var(--ink); }
+
+.theme-toggle svg { width: 19px; height: 19px; display: none; }
+
+/* The head script always sets data-theme-mode, so one icon is always shown.
+   The :not() fallback covers a reader with JavaScript turned off. */
+:root:not([data-theme-mode]) .theme-toggle .i-system,
+:root[data-theme-mode="system"] .theme-toggle .i-system,
+:root[data-theme-mode="light"] .theme-toggle .i-light,
+:root[data-theme-mode="dark"] .theme-toggle .i-dark { display: block; }
 
 /* ---------- hero (index) ---------- */
 
