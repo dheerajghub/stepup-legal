@@ -337,7 +337,7 @@ def shell(*, title, description, depth, current, body, page_class=""):
   <div class="wrap">
     <a class="brand" href="{rel("")}">
       <img class="brand-mark" src="{up}assets/logo.png" alt="" width="30" height="30">
-      <span class="wordmark">StepUp<span class="dot">.</span></span>
+      <span class="wordmark">StepUp</span>
     </a>
     <nav class="site-nav" aria-label="Primary">{nav}</nav>
   </div>
