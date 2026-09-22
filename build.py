@@ -26,7 +26,7 @@ from datetime import date
 SITE_URL = "https://dheerajghub.github.io/stepup-legal"
 APP_NAME = "StepUp"
 OWNER = "Dheeraj Kumar Sharma"
-SUPPORT_EMAIL = "support@getstepup.app"
+SUPPORT_EMAIL = "dheerajsh.codes@gmail.com"
 SOURCE_DIR = os.path.join("..", "stepup", "docs", "legal")
 
 PAGES = [
@@ -246,7 +246,7 @@ def convert(md, rel):
             out.append(f"<p>{inline(joined, rel)}</p>")
 
     if title is None:
-        raise SystemExit("No H1 found — refusing to publish a document with no title.")
+        raise SystemExit("No H1 found. Refusing to publish an untitled document.")
     return title, toc, "\n".join(out)
 
 
@@ -480,27 +480,27 @@ def build_support():
     <h2 id="steps-are-wrong">My steps look wrong or missing</h2>
     <p>StepUp does not count steps itself. It reads whatever Apple Health already
     holds, so if a number looks wrong, open the Health app and check it there
-    first — if Health disagrees with StepUp, that is a bug and we want to hear
+    first. If Health disagrees with StepUp, that is a bug and we want to hear
     about it.</p>
     <p>If StepUp shows nothing at all, check
     <strong>Settings &rsaquo; Health &rsaquo; Data Access &amp; Devices &rsaquo;
     StepUp</strong> and make sure the categories are on. Apple deliberately does
-    not tell apps which permissions were denied, so StepUp cannot warn you — it
+    not tell apps which permissions were denied, so StepUp cannot warn you. It
     can only show an empty screen.</p>
 
     <h2 id="metrics-locked">A metric says it needs more data</h2>
     <p>Each metric needs a minimum number of readings before it can say anything
     honest. Pace, Effort and Fitness additionally need walking workouts and
     walking heart rate, which are written by an Apple Watch. Without a Watch,
-    those three stay quiet — that is expected, not a fault.</p>
+    those three stay quiet. That is expected, not a fault.</p>
 
     <h2 id="subscription">Billing, refunds and cancelling</h2>
     <p>Apple handles every payment for StepUp Pro. To cancel, open
     <strong>Settings &rsaquo; your name &rsaquo; Subscriptions</strong> on your
     iPhone. Cancel at least 24 hours before your period ends to avoid the next
     charge.</p>
-    <p>Refunds are issued by Apple, not by us — we have no ability to grant or
-    reverse one. Request yours at
+    <p>Refunds are issued by Apple, not by us, and we have no ability to grant
+    or reverse one. Request yours at
     <a href="https://reportaproblem.apple.com">reportaproblem.apple.com</a>.</p>
     <p>Buying Lifetime does <strong>not</strong> cancel an existing subscription;
     Apple does not permit one purchase to cancel another. If you bought Lifetime
@@ -515,8 +515,8 @@ def build_support():
     <h2 id="delete">Deleting your account</h2>
     <p>Profile &rsaquo; Delete Account removes your account and its data from our
     servers and clears StepUp's data from your device. It cannot be undone.</p>
-    <p>It does <strong>not</strong> cancel an active subscription — only Apple can
-    do that, using the steps above. Please cancel first.</p>
+    <p>It does <strong>not</strong> cancel an active subscription. Only Apple
+    can do that, using the steps above. Please cancel first.</p>
 
     <h2 id="privacy">Privacy</h2>
     <p>The short version: your health data never leaves your iPhone. The long
@@ -564,11 +564,10 @@ def main():
     leftover = sorted(set(re.findall(r'<span class="placeholder">\[([^\]]+)\]', rendered)))
     print()
     if leftover:
-        print("WARNING — unfilled placeholders are live on the site:")
+        print("WARNING: unfilled placeholders are live on the site:")
         for item in leftover:
             print(f"  [{item}]")
         print(f"\n  Fix them in {SOURCE_DIR}/ and run this again.")
-        print("  GDPR Article 13 requires a postal address on the privacy policy.")
         return 1
     print("No unfilled placeholders. Ready to publish.")
     return 0

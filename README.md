@@ -28,7 +28,7 @@ stepup/docs/legal/terms-of-service.md ->  terms/index.html
 
 Editing the markdown in one place keeps the published policy, the App Store
 privacy questionnaire (`stepup/docs/app-store/app-privacy.md`) and the
-engineering notes (`stepup/docs/privacy.md`) from drifting apart — which is the
+engineering notes (`stepup/docs/privacy.md`) from drifting apart. That is the
 failure that gets an app pulled, not a typo.
 
 Regions fenced like this in the markdown are developer notes and never reach the
@@ -56,7 +56,7 @@ Then:
 python3 build.py
 ```
 
-No dependencies — it is plain Python 3. It regenerates every page, and **exits
+No dependencies, just plain Python 3. It regenerates every page, and **exits
 non-zero if any `[PLACEHOLDER]` is still unfilled**, so you cannot accidentally
 publish a privacy policy that says `[POSTAL ADDRESS]`. Unfilled placeholders are
 also rendered in orange on the page itself.
@@ -78,8 +78,8 @@ Jekyll over them.
 
 ## Moving to a custom domain later
 
-Nothing in the documents has to change — every internal link the build emits is
-relative, so the site works at a `github.io` subpath and at a domain root
+Nothing in the documents has to change, because every internal link the build
+emits is relative, so the site works at a `github.io` subpath and at a domain root
 without being rebuilt.
 
 1. Put the domain in a `CNAME` file at the repo root, e.g. `legal.getstepup.app`.
