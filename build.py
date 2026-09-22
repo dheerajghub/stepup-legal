@@ -66,42 +66,62 @@ INTERNAL = {
 # --------------------------------------------------------------------------
 
 CODE_TOKEN = "\x00CODE%d\x00"
+LINK_TOKEN = "\x00LINK%d\x00"
+URL_RE = re.compile(r'https?://[^\s<>"\)]+')
 
 
 def inline(text, rel):
     """Inline formatting for one run of text."""
-    codes = []
+    codes, links = [], []
 
-    def stash(m):
+    def stash_code(m):
         codes.append(html.escape(m.group(1)))
         return CODE_TOKEN % (len(codes) - 1)
 
-    text = re.sub(r"`([^`]+)`", stash, text)
+    def stash_link(href, label):
+        links.append(f'<a href="{href}">{label}</a>')
+        return LINK_TOKEN % (len(links) - 1)
+
+    text = re.sub(r"`([^`]+)`", stash_code, text)
     text = html.escape(text)
 
     # [label](url)
-    def link(m):
+    def md_link(m):
         label, url = m.group(1), m.group(2)
         if url in INTERNAL:
             url = rel(INTERNAL[url])
-        return f'<a href="{url}">{label}</a>'
+        return stash_link(url, label)
 
-    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", link, text)
+    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", md_link, text)
 
-    # Bare URLs that were not already linked.
-    for absolute, slug in INTERNAL.items():
-        text = text.replace(absolute, rel(slug))
+    # Bare URLs left in the prose become real links. An internal one is shown
+    # as its canonical address but points at a relative path, so the page keeps
+    # working if the site moves to a custom domain.
+    def bare(m):
+        url = m.group(0)
+        trailing = ""
+        while url and url[-1] in ".,;:!?":
+            trailing = url[-1] + trailing
+            url = url[:-1]
+        if url in INTERNAL:
+            slug = INTERNAL[url]
+            return stash_link(rel(slug), f"{SITE_URL}/{slug}/") + trailing
+        return stash_link(url, url) + trailing
+
+    text = URL_RE.sub(bare, text)
 
     text = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", text)
     text = re.sub(r"(?<![\w*])\*([^*\n]+)\*(?![\w*])", r"<em>\1</em>", text)
 
     # [POSTAL ADDRESS] and friends: make an unfilled placeholder loud.
     text = re.sub(
-        r"\[([A-Z][A-Z0-9 _/&.,'-]{2,})\](?!\()",
+        r"\[([A-Z][A-Z0-9 _/&.,\'-]{2,})\](?!\()",
         r'<span class="placeholder">[\1]</span>',
         text,
     )
 
+    for i, link in enumerate(links):
+        text = text.replace(LINK_TOKEN % i, link)
     for i, code in enumerate(codes):
         text = text.replace(CODE_TOKEN % i, f"<code>{code}</code>")
     return text
@@ -351,26 +371,29 @@ def build_document(page):
         raise SystemExit(f"Missing source: {source}")
     md = open(source, encoding="utf-8").read()
     rel = relative_from(1)
-    title, toc, body = convert(md, rel)
 
-    # The first two bold lines of each document are the date stamps.
-    stamps = re.findall(r"^\*\*(Last updated|Effective):\s*(.+?)\*\*$", md, re.M)
+    # The bold lines under the title become the pill badge, so they are lifted
+    # out of the markdown before conversion rather than deleted from the HTML
+    # afterwards.
+    stamp_re = re.compile(r"^\*\*(Last updated|Effective):\s*(.+?)\*\*$", re.M)
+    stamps = stamp_re.findall(md)
+    md = stamp_re.sub("", md)
+
     stamp_html = ""
     if stamps:
         label = " · ".join(f"{k}: {v}" for k, v in stamps)
         stamp_html = f'<p class="stamp">{html.escape(label)}</p>'
-    body = re.sub(
-        r"<p><strong>(Last updated|Effective):[^<]*</strong></p>\s*", "", body
-    )
+
+    title, toc, body = convert(md, rel)
 
     toc_html = ""
     if toc:
         items = "".join(f'<li><a href="#{a}">{t}</a></li>' for a, t in toc)
-        toc_html = f'<div class="toc"><h2>On this page</h2><ol>{items}</ol></div>'
+        toc_html = f'<div class="toc"><h2>On this page</h2><ul>{items}</ul></div>'
 
     inner = f"""<div class="wrap">
   <div class="doc-head">
-    <h1>{html.escape(title.replace(APP_NAME + " ", ""))}</h1>
+    <h1>{title.replace(APP_NAME + " ", "")}</h1>
     {stamp_html}
     {toc_html}
   </div>

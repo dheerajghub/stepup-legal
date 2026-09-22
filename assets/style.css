@@ -234,12 +234,12 @@ a.card p { margin: 6px 0 0; color: var(--ink-muted); font-size: .95rem; line-hei
   margin: 0 0 12px;
 }
 
-.toc ol { margin: 0; padding: 0 0 0 1.25em; columns: 2; column-gap: 28px; }
+.toc ul { margin: 0; padding: 0; list-style: none; columns: 2; column-gap: 28px; }
 .toc li { margin: 0 0 6px; font-size: .92rem; break-inside: avoid; }
 .toc a { color: var(--ink); text-decoration: none; }
 .toc a:hover { color: var(--accent); text-decoration: underline; }
 
-@media (max-width: 34rem) { .toc ol { columns: 1; } }
+@media (max-width: 34rem) { .toc ul { columns: 1; } }
 
 .doc { padding: 8px 0 72px; }
 
